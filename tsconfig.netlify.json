@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "netlify/functions/dist",
+    "module": "commonjs",
+    "target": "es2018"
+  },
+  "include": ["netlify/functions/**/*"]
+} 
