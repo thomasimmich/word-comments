@@ -21,7 +21,7 @@ const turndownService = new TurndownService({
 });
 
 // Endpoint to get the Word document as markdown
-app.get('/document/markdown', async (req: Request, res: Response) => {
+app.post('/document/markdown', async (req: Request, res: Response) => {
     try {
         const result = await mammoth.convertToHtml({ path: DOCUMENT_PATH });
         
@@ -35,7 +35,8 @@ app.get('/document/markdown', async (req: Request, res: Response) => {
             .replace(/<i>(.*?)<\/i>/gi, '<em>$1</em>');
         
         const markdown = turndownService.turndown(processedHtml);
-        res.json({ markdown });
+        res.setHeader('Content-Type', 'application/json');
+        res.json({ data: markdown });
     } catch (error) {
         console.error('Error converting document to markdown:', error);
         res.status(500).json({ error: 'Failed to convert document to markdown' });
@@ -79,6 +80,15 @@ app.get('/document/comment', (async (req: Request, res: Response): Promise<void>
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const HOST = '127.0.0.1';
 
+// Add a test endpoint to verify server is running
+app.get('/test', (req: Request, res: Response) => {
+    res.json({ status: 'Server is running' });
+});
+
 app.listen(PORT, HOST, () => {
     console.log(`Server is running on http://${HOST}:${PORT}`);
+    console.log('Available endpoints:');
+    console.log('- GET /test');
+    console.log('- POST /document/markdown');
+    console.log('- GET /document/comment');
 }); 
